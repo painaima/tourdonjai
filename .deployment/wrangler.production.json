@@ -1,0 +1,44 @@
+{
+  "name": "tourdonjai",
+  "account_id": "ff88c9a65e3a7b03c6f085ff6e4f032b",
+  "main": "../dist/server/index.js",
+  "compatibility_date": "2026-05-15",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "no_bundle": true,
+  "rules": [
+    {
+      "type": "ESModule",
+      "globs": [
+        "**/*.js",
+        "**/*.mjs"
+      ]
+    }
+  ],
+  "assets": {
+    "directory": "../dist/client"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tourdonjai-web-db",
+      "database_id": "db4b0c9c-7046-40fb-9b20-d75b7642bd5d"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "BUCKET",
+      "bucket_name": "tourdonjai-web-images"
+    }
+  ],
+  "vars": {
+    "ADMIN_EMAIL": "tourdonjai@gmail.com",
+    "ACCESS_TEAM_DOMAIN": "https://cool-salad-4a56.cloudflareaccess.com",
+    "ACCESS_AUD": "3dac1ad7b61f8b4dbf2f038e10ca20fe76de1b000463e89777baf2ea55de37bb"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "workers_dev": true
+}

@@ -1,0 +1,13 @@
+{
+  "account_id": "ff88c9a65e3a7b03c6f085ff6e4f032b",
+  "github_repository": "https://github.com/painaima/tourdonjai.git",
+  "browser": "chrome",
+  "browser_profile": "tourdonjai",
+  "admin_email": "tourdonjai@gmail.com",
+  "worker_name": "tourdonjai",
+  "database_name": "tourdonjai-web-db",
+  "database_id": "db4b0c9c-7046-40fb-9b20-d75b7642bd5d",
+  "bucket_name": "tourdonjai-web-images",
+  "access_application_id": "f5b284e4-2cc5-466d-83ae-d4563e33f2ae",
+  "workers_subdomain": "tourdonjai"
+}

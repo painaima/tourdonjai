@@ -1,0 +1,56 @@
+{
+  "feature": {
+    "key": "db47e09c-d25c-40b2-8e67-1a6f30598dc8.jpg",
+    "file": "ttk26-feature.jpg",
+    "bytes": 261632,
+    "sha256": "f68d9c5d1b894b4a6c728d4d7ccb3ea238ab86747da875d011585f55a8f69b8e",
+    "width": 1200,
+    "height": 800,
+    "jpegQuality": 80
+  },
+  "erciyes": {
+    "key": "302276d3-8449-45ce-8052-7b9fb0357b37.jpg",
+    "file": "ttk26-erciyes.jpg",
+    "bytes": 206143,
+    "sha256": "92723149f849f08c0422fa0c0b3bc1ae46167db9b0349c798620b3285bb55003",
+    "width": 1200,
+    "height": 800,
+    "jpegQuality": 80
+  },
+  "cappadocia": {
+    "key": "4784f619-1456-4443-b248-f61189e47c8d.jpg",
+    "file": "ttk26-cappadocia.jpg",
+    "bytes": 239900,
+    "sha256": "2b3519d7905c512a727ff20ca3e4b4dde10c28e4f8a637a3fa783a5cdbd0194b",
+    "width": 1200,
+    "height": 800,
+    "jpegQuality": 80
+  },
+  "pamukkale": {
+    "key": "881fa3e1-1e5e-445d-b6ca-f198fffc9231.jpg",
+    "file": "ttk26-pamukkale.jpg",
+    "bytes": 221750,
+    "sha256": "0f8f64bfba950cfc556e7cf6ad03728d58a5a84c0146d13efd3d6ae8f0ba12b7",
+    "width": 1200,
+    "height": 800,
+    "jpegQuality": 80
+  },
+  "istanbul": {
+    "key": "4e152d7d-771b-4869-a6cd-42b9d3ca23a1.jpg",
+    "file": "ttk26-istanbul.jpg",
+    "bytes": 258958,
+    "sha256": "a682e95b3dcad19365f28efeb0850c6eeff6e404603f623c4bf9e6a37c541bfc",
+    "width": 1200,
+    "height": 800,
+    "jpegQuality": 80
+  },
+  "balat": {
+    "key": "cf7ffa3a-cffe-4bfa-8827-06797197144e.jpg",
+    "file": "ttk26-balat.jpg",
+    "bytes": 292432,
+    "sha256": "bd5599a3c2713a0a555f40d8b5369baa3bf9b5cd1decd6626d12643078666896",
+    "width": 1200,
+    "height": 800,
+    "jpegQuality": 80
+  }
+}

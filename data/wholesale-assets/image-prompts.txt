@@ -1,0 +1,7 @@
+Tool: built-in image_gen (two edit/compositing calls)
+
+HEK22: Use case: compositing. Card feature image, wide landscape 16:9. Layout the supplied actual photographs: Victoria Peak panorama at 65%, Wong Tai Sin and Repulse Bay in two separated right-hand panels. Preserve landmark geometry, architecture, statues, number of objects and geographical details. No invented scenery, buildings, figures, monuments, magical effects, aircraft, or merging locations. Mild natural exposure/contrast balancing only. Deep navy, royal blue, narrow orange border and small warm-gold accents. Exact Thai text: ทัวร์โดนใจ; ฮ่องกง; 3 วัน 2 คืน; HEK22. No price, dates, supplier logos, fake badges, or other text.
+
+HEK23: Use case: compositing. Card feature image, wide landscape 16:9. Layout the supplied actual photographs: Victoria Peak panorama at 65%, Wong Tai Sin and Repulse Bay in two separated right-hand panels. Preserve landmark geometry, architecture, statues, number of objects and geographical details. No invented scenery, buildings, figures, monuments, magical effects, aircraft, or merging locations. Mild natural exposure/contrast balancing only. Deep navy, royal blue, narrow orange border and small warm-gold accents. Exact Thai text: ทัวร์โดนใจ; ฮ่องกง; 3 วัน 2 คืน; HEK23. No price, dates, supplier logos, fake badges, or other text.
+
+Gallery: five source photographs extracted directly from the PDF without generation or editing.
