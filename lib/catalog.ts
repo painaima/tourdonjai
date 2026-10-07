@@ -2,6 +2,7 @@ import type {TourFields} from './tour';
 import {tourDefaults} from './tour';
 export type Service=TourFields & {id:string;title:string;category:string;country:string;price:number;duration:string;image:string;tag:string;published:boolean;description:string};
 export const categories=['ทัวร์','วีซ่า','ตั๋วเครื่องบิน','ตั๋วกิจกรรม'];
+export const activityChoices=['ชมฟูจิ','ช้อปปิ้ง','ธรรมชาติ','เมืองเก่า','หิมะ','ทะเล','สายมู','ไหว้พระ','วัฒนธรรม','สวนสนุก','ล่องเรือ'];
 export const seeds:Service[]=[
 {id:'japan',title:'ญี่ปุ่น โตเกียว ฟูจิ เที่ยวครบทุกมุม',category:'ทัวร์',country:'ญี่ปุ่น',price:24900,duration:'5 วัน 3 คืน',image:'/images/japan.jpg',tag:'ยอดนิยม',published:true,description:'ชมภูเขาไฟฟูจิ เดินเล่นย่านโตเกียว และสัมผัสวัฒนธรรมญี่ปุ่น พร้อมไกด์ดูแลตลอดการเดินทาง'},
 {id:'europe',title:'ยุโรป ออสเตรีย หมู่บ้านริมทะเลสาบ',category:'ทัวร์',country:'ออสเตรีย',price:49900,duration:'9 วัน 6 คืน',image:'/images/europe.jpg',tag:'ทริปแนะนำ',published:true,description:'สัมผัสวิวเทือกเขาแอลป์ เยือนฮัลล์ชตัทท์ และพักผ่อนท่ามกลางเมืองสวยริมทะเลสาบ'},
