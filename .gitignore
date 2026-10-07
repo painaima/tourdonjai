@@ -52,3 +52,5 @@ next-env.d.ts
 *.tsbuildinfo
 
 /.deployment/migration/
+
+/.deployment/image-optimization/
