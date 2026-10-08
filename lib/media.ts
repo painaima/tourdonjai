@@ -3,11 +3,19 @@ import {seeds} from './catalog';
 import {database} from './storage';
 
 export function mediaKeys(service: Record<string, any>): string[] {
-  const urls = [service.image, ...(service.gallery || []), ...(service.wholesale?.imageSources || []).map((image: {url: string}) => image.url)];
+  const urls = [service.image, service.pdfUrl, ...(service.gallery || []), ...(service.wholesale?.imageSources || []).map((image: {url: string}) => image.url)];
   return [...new Set<string>(urls.filter((url): url is string => typeof url === 'string').flatMap(url => {
-    const match = /^\/api\/media\/([a-f0-9-]+\.(?:jpg|png|webp))$/.exec(url);
+    const match = /^\/api\/media\/([a-f0-9-]+\.(?:jpg|png|webp|pdf))$/.exec(url);
     return match ? [match[1]] : [];
   }))];
+}
+
+export async function storedPdfValid(url: unknown) {
+  if (url === undefined || url === '') return true;
+  const key = typeof url === 'string' ? /^\/api\/media\/([a-f0-9-]+\.pdf)$/.exec(url)?.[1] : undefined;
+  if (!key || !env.BUCKET) return false;
+  const object = await env.BUCKET.head(key);
+  return !!object && object.size <= 20 * 1024 * 1024 && object.httpMetadata?.contentType === 'application/pdf';
 }
 export async function deleteUnusedMedia(service: Record<string, any>) {
   if (!env.BUCKET) throw new Error('Media storage unavailable');
