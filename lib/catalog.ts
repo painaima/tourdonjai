@@ -13,5 +13,5 @@ export const seeds:Service[]=[
 {id:'flight',title:'ตั๋วเครื่องบิน เที่ยวเดียว / ไป–กลับ',category:'ตั๋วเครื่องบิน',country:'ทั่วโลก',price:0,duration:'เลือกเส้นทางและวันเดินทาง',image:'/images/japan.jpg',tag:'ขอราคา',published:true,description:'ระบุสนามบินต้นทาง ปลายทาง วันเดินทาง และจำนวนผู้โดยสาร ทีมงานตรวจสอบราคาและเงื่อนไขก่อนยืนยัน'},
 {id:'multi-city',title:'ตั๋วหลายเมืองและตั๋วกรุ๊ป',category:'ตั๋วเครื่องบิน',country:'ทั่วโลก',price:0,duration:'จัดเส้นทางตามคำขอ',image:'/images/europe.jpg',tag:'สำหรับกรุ๊ป',published:true,description:'บริการจัดเส้นทางหลายเมืองและตั๋วสำหรับกลุ่มเดินทาง ขอใบเสนอราคาพร้อมเงื่อนไขสัมภาระและการเปลี่ยนแปลง'},
 {id:'activities',title:'ตั๋วสวนสนุกและกิจกรรมในญี่ปุ่น',category:'ตั๋วกิจกรรม',country:'ญี่ปุ่น',price:2500,duration:'บัตร 1 วัน',image:'/images/japan.jpg',tag:'เที่ยวให้ครบ',published:true,description:'แจ้งสวนสนุกหรือกิจกรรมที่สนใจ พร้อมวันใช้งาน ทีมงานตรวจสอบจำนวนบัตร ราคา และเงื่อนไขก่อนยืนยัน'}
-].map(tourDefaults);
+].map(s=>tourDefaults(s,true));
 export const money=(p:number)=>p ? '฿ '+p.toLocaleString('th-TH') : 'สอบถามราคา';

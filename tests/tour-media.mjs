@@ -7,7 +7,7 @@ const tour=await import(url(compile('lib/tour.ts')));
 const picture='/api/media/1234.jpg',shared='/api/media/5678.jpg',source='/api/media/abcd.jpg';
 assert.deepEqual(tour.coverGallery({image:picture,gallery:[shared,picture]}),[picture,shared]);
 assert.equal(tour.tourDefaults({id:'sample',category:'ทัวร์',country:'ญี่ปุ่น',image:picture,gallery:[shared]}).gallery[0],picture);
-assert.equal(tour.tourDefaults({id:'japan',category:'ทัวร์',country:'ญี่ปุ่น',image:'/images/japan.jpg'}).gallery.length,8,'retain built-in gallery defaults');
+assert.equal(tour.tourDefaults({id:'japan',category:'ทัวร์',country:'ญี่ปุ่น',image:'/images/japan.jpg'},true).gallery.length,8,'retain built-in gallery defaults');
 const records=[{id:'removed',deleted:true,image:picture,gallery:[shared],wholesale:{imageSources:[{url:source}]}},{id:'remaining',image:shared}];
 const removed=[];
 globalThis.mediaTest={records,removed,env:{BUCKET:{delete:async keys=>removed.push(...keys),head:async key=>key==='abcd.jpg'?{size:150001}:key==='1234.jpg'?{size:150000}:null}}};
