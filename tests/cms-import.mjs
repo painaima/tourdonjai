@@ -11,8 +11,17 @@ const tour = await import(tourUrl);
 const catalogUrl = moduleUrl(compile('lib/catalog.ts').replace("'./tour'",JSON.stringify(tourUrl)));
 const validationUrl = moduleUrl(compile('lib/catalog-validation.ts').replace("'./tour'",JSON.stringify(tourUrl)).replace("'./catalog'",JSON.stringify(catalogUrl)));
 const {validateCatalogInput} = await import(validationUrl);
-const {readUploadResponse,uploadPdf} = await import(moduleUrl(compile('lib/image-upload.ts')));
+const {readUploadResponse,uploadPdf,compactImage} = await import(moduleUrl(compile('lib/image-upload.ts')));
 const image = '/api/media/1234.jpg';
+const realCreateImageBitmap = globalThis.createImageBitmap;
+let closed = false;
+globalThis.createImageBitmap = async () => ({width:1200,height:800,close(){closed=true}});
+const preparedBytes = new Uint8Array(145000);
+preparedBytes.set([255,216,255]);
+const preparedImage = await compactImage(new File([preparedBytes],'prepared.jpg'),'prepared.jpg');
+assert.deepEqual(new Uint8Array(await preparedImage.arrayBuffer()),preparedBytes,'preserve prepared JPEG bytes and exact dimensions');
+assert.equal(closed,true);
+globalThis.createImageBitmap = realCreateImageBitmap;
 const draft = {id:'',title:'USA Tour',category:'ทัวร์',country:'สหรัฐอเมริกา',price:129888,duration:'9 วัน 7 คืน',tag:'ทริปแนะนำ',description:'ตาม PDF',image,gallery:[image],serviceCode:'UJX14',published:false,departures:[{start:'2026-10-23',end:'2026-10-31',price:129888}]};
 
 assert.equal((await readUploadResponse(Response.json({url:image},{status:201}),'image')).url,image);

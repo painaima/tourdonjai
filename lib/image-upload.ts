@@ -40,6 +40,11 @@ export async function compactImage(file: Blob, name = 'tour-image'): Promise<Fil
   if (file.size > 20 * 1024 * 1024) throw new Error('กรุณาเลือกรูปต้นฉบับไม่เกิน 20 MB');
   const bitmap = await createImageBitmap(file, {imageOrientation: 'from-image'});
   try {
+    const signature = new Uint8Array(await file.slice(0, 3).arrayBuffer());
+    if (file.size <= MAX_IMAGE_BYTES && bitmap.width <= 1600 && bitmap.height <= 1600
+      && signature[0] === 255 && signature[1] === 216 && signature[2] === 255) {
+      return new File([file], name.replace(/\.[^.]+$/, '') + '.jpg', {type: 'image/jpeg'});
+    }
     let width = Math.min(bitmap.width, 1600);
     for (let attempt = 0; attempt < 12; attempt++) {
       const canvas = document.createElement('canvas');
