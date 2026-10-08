@@ -29,7 +29,7 @@ export async function uploadImage(file: Blob, name?: string): Promise<string> {
   data.append('file', await compactImage(file, name));
   const response = await fetch('/api/media', {method: 'POST', body: data});
   const result = await response.json() as {url: string; error?: string};
-  if (!response.ok) throw new Error(result.error || 'อัปโหลดรูปไม่สำเร็จ');
+  if (!response.ok || typeof result.url !== 'string' || !result.url.trim()) throw new Error(result.error || 'อัปโหลดรูปไม่สำเร็จ');
   return result.url;
 }
 
@@ -41,3 +41,4 @@ export async function uploadPdf(file: File): Promise<{url: string; name: string}
   if (!response.ok || !result.url) throw new Error(result.error || 'อัปโหลด PDF ไม่สำเร็จ');
   return {url: result.url, name: result.name || file.name};
 }
+
