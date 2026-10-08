@@ -16,7 +16,7 @@ export function businessDate(now=new Date()){return new Intl.DateTimeFormat('en-
 export function departureExpired(d:Departure,today=businessDate()){return !!d.start&&d.start<today}
 export function tourClosed(s:Service,today=businessDate()){return s.category==='ทัวร์'&&!!s.departures?.length&&s.departures.every(d=>departureExpired(d,today))}
 export function serviceCode(s:Service){return s.serviceCode||s.id.toUpperCase()}
-function slugCountry(country:string){const english:Record<string,string>={'ไต้หวัน':'taiwan','ตุรเคีย':'turkey'};return english[country]||country.normalize('NFC').trim().replace(/\s+/g,'-').replace(/[^\p{L}\p{M}\p{N}-]/gu,'').toLowerCase()}
+function slugCountry(country:string){const english:Record<string,string>={'ไต้หวัน':'taiwan','ตุรเคีย':'turkey','สหรัฐอเมริกา':'usa'};return english[country]||country.normalize('NFC').trim().replace(/\s+/g,'-').replace(/[^\p{L}\p{M}\p{N}-]/gu,'').toLowerCase()}
 export function serviceSlug(s:Service){return `${slugCountry(s.country)}-${serviceCode(s)}`.normalize('NFC').trim().replace(/\s+/g,'-').replace(/[^\p{L}\p{M}\p{N}-]/gu,'').toLowerCase()}
 export function legacyServiceSlug(s:Service){return `${s.country}-${serviceCode(s)}`.normalize('NFC').trim().replace(/\s+/g,'-').replace(/[^\p{L}\p{M}\p{N}-]/gu,'').toLowerCase()}
 export function activeDepartures(s:Service,today=businessDate()){return (s.departures||[]).filter(d=>!departureExpired(d,today)).sort((a,b)=>a.start.localeCompare(b.start))}
