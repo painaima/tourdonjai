@@ -22,6 +22,7 @@ export function validateCatalogInput(input: unknown): {item: Service} | {error: 
     if (typeof item.serviceCode !== 'string' || item.serviceCode.length > 60) return fail('รหัสทัวร์ต้องไม่เกิน 60 ตัวอักษร');
     item.serviceCode = item.serviceCode.trim();
   }
+  if (item.urlCountry !== undefined && (typeof item.urlCountry !== 'string' || item.urlCountry.length > 60 || item.urlCountry !== '' && !/^[a-z]+(?:-[a-z]+)*$/.test(item.urlCountry))) return fail('ประเทศใน URL ต้องเป็นภาษาอังกฤษตัวเล็ก เช่น italy');
   if (item.published !== undefined && typeof item.published !== 'boolean') return fail('สถานะเผยแพร่ต้องเป็นค่าจริงหรือเท็จ');
   if (item.gallery !== undefined) {
     if (!Array.isArray(item.gallery)) return fail('แกลเลอรีรูปภาพไม่ถูกต้อง');
