@@ -23,3 +23,33 @@ assert.equal(await media.storedImagesValid([source]),false);
 assert.equal(await media.storedImagesValid([shared]),false);
 assert.equal(await media.storedImagesValid(['https://example.com/photo.jpg']),false);
 console.log('Cover ordering, shared-photo cleanup and 150 KB storage checks passed');
+
+// R2's live stream may end when the framework releases the route context.
+// A multi-megabyte PDF must still arrive intact, with download metadata.
+const pdfBytes = Buffer.alloc(3_230_065, 65);
+pdfBytes.set(Buffer.from('%PDF-1.7\n'));
+pdfBytes.set(Buffer.from('\n%%EOF'), pdfBytes.length - 6);
+let mediaReads = 0;
+globalThis.mediaTest.env.BUCKET.get = async key => {
+  mediaReads++;
+  if (key === '0000.pdf') return null;
+  if (key === 'ffff.pdf') throw new Error('R2 unavailable');
+  return {
+    body: new ReadableStream({start(controller) {controller.enqueue(pdfBytes.subarray(0, 602_112)); controller.close();}}),
+    arrayBuffer: async () => pdfBytes.buffer.slice(pdfBytes.byteOffset, pdfBytes.byteOffset + pdfBytes.byteLength),
+    writeHttpMetadata(headers) {headers.set('Content-Disposition', 'attachment; filename="IEK177.pdf"');},
+  };
+};
+const downloadRoute = await import(url(compile('app/api/media/[key]/route.ts').replace("'cloudflare:workers'", JSON.stringify(envUrl))));
+const request = new Request('https://example.com/api/media/1234.pdf');
+const response = await downloadRoute.GET(request, {params: Promise.resolve({key: '1234.pdf'})});
+assert.equal(response.status, 200);
+assert.equal(response.headers.get('Content-Type'), 'application/pdf');
+assert.equal(response.headers.get('Content-Length'), String(pdfBytes.length));
+assert.equal(response.headers.get('Content-Disposition'), 'attachment; filename="IEK177.pdf"');
+assert.deepEqual(Buffer.from(await response.arrayBuffer()), pdfBytes, 'download the entire PDF, not a prematurely closed R2 stream');
+assert.equal((await downloadRoute.GET(request, {params: Promise.resolve({key: '../private.pdf'})})).status, 404);
+assert.equal(mediaReads, 1, 'invalid keys do not access storage');
+assert.equal((await downloadRoute.GET(request, {params: Promise.resolve({key: '0000.pdf'})})).status, 404);
+assert.equal((await downloadRoute.GET(request, {params: Promise.resolve({key: 'ffff.pdf'})})).status, 503);
+console.log('Complete large PDF downloads, metadata and storage errors passed');
