@@ -27,3 +27,6 @@ assert.equal(t.validDate('2026-02-30'),false);
 assert.equal(t.validDate('2028-02-29'),true);
 assert.equal(t.tourClosed({...tour,departures:[past,{...future,start:'2099-12-01'}]}),false,'adding a future round reopens a closed tour');
 console.log('17 catalog, date-boundary, closure and filter assertions passed');
+
+assert.equal(t.serviceSlug({...tour,serviceCode:'IEK169',country:'ยุโรป',urlCountry:'italy'}),'italy-iek169');
+assert.equal(t.serviceSlug({...tour,serviceCode:'JP001'}),t.legacyServiceSlug({...tour,serviceCode:'JP001'}),'existing URLs stay unchanged without override');

@@ -2,7 +2,7 @@ import type {Service} from './catalog';
 export type TourDay={title:string;description:string;meals:string;hotel:string};
 export type Departure={start:string;end:string;price:number;seats?:number|null;capacity?:number;commission?:number|null;outboundFlight?:string;returnFlight?:string};
 export type WholesaleInfo={supplier:string;sourceFile:string;importedAt:string;notes:string[];meetingTime:string;departureAirport:string;arrivalAirport:string;checkedBaggageKg:number|null;carryOnKg:number|null;singleSupplement:number|null;infantPrice:number|null;childPolicy:string;deposit:number|null;balanceDue:string;minimumGroup:number|null;insuranceCoverage:number|null;tip:number|null;tipNotes?:string;hotelNotice:string;taxNotes:string;documents:string;flightNotes:string;imageSources:{caption:string;page?:number;kind?:'pdf'|'ai';url:string}[]};
-export type TourFields={wholesale?:WholesaleInfo;serviceCode?:string;activityTags?:string[];closed?:boolean;gallery?:string[];highlights?:string[];itinerary?:TourDay[];departures?:Departure[];included?:string[];excluded?:string[];terms?:string;airline?:string;hotel?:string;pdfUrl?:string;pdfName?:string};
+export type TourFields={wholesale?:WholesaleInfo;urlCountry?:string;serviceCode?:string;activityTags?:string[];closed?:boolean;gallery?:string[];highlights?:string[];itinerary?:TourDay[];departures?:Departure[];included?:string[];excluded?:string[];terms?:string;airline?:string;hotel?:string;pdfUrl?:string;pdfName?:string};
 export const japanGallery=['/images/japan.jpg','/images/fuji-lake.jpg','/images/tokyo.jpg','/images/shibuya.jpg','/images/tokyo-neon.jpg','/images/tokyo-tower.jpg','/images/fuji-autumn.jpg','/images/temple-evening.jpg'];
 export const imageChoices=[...japanGallery,'/images/europe.jpg'];
 export function validImage(v:unknown):v is string {if(typeof v!=='string')return false;if(imageChoices.includes(v)||/^\/api\/media\/[a-f0-9-]+\.(jpg|png|webp)$/.test(v))return true;try{const u=new URL(v);return u.protocol==='https:'&&!u.username&&!u.password&&v.length<2000;}catch{return false}}
@@ -20,7 +20,7 @@ export function departureExpired(d:Departure,today=businessDate()){return !!d.st
 export function tourClosed(s:Service,today=businessDate()){return s.category==='ทัวร์'&&!!s.departures?.length&&s.departures.every(d=>departureExpired(d,today))}
 export function serviceCode(s:Service){return s.serviceCode||s.id.toUpperCase()}
 function slugCountry(country:string){const english:Record<string,string>={'จีน':'china','ไต้หวัน':'taiwan','ตุรเคีย':'turkey','สหรัฐอเมริกา':'usa'};return english[country]||country.normalize('NFC').trim().replace(/\s+/g,'-').replace(/[^\p{L}\p{M}\p{N}-]/gu,'').toLowerCase()}
-export function serviceSlug(s:Service){return `${slugCountry(s.country)}-${serviceCode(s)}`.normalize('NFC').trim().replace(/\s+/g,'-').replace(/[^\p{L}\p{M}\p{N}-]/gu,'').toLowerCase()}
+export function serviceSlug(s:Service){return `${s.urlCountry||slugCountry(s.country)}-${serviceCode(s)}`.normalize('NFC').trim().replace(/\s+/g,'-').replace(/[^\p{L}\p{M}\p{N}-]/gu,'').toLowerCase()}
 export function legacyServiceSlug(s:Service){return `${s.country}-${serviceCode(s)}`.normalize('NFC').trim().replace(/\s+/g,'-').replace(/[^\p{L}\p{M}\p{N}-]/gu,'').toLowerCase()}
 export function activeDepartures(s:Service,today=businessDate()){return (s.departures||[]).filter(d=>!departureExpired(d,today)).sort((a,b)=>a.start.localeCompare(b.start))}
 export function startingPrice(s:Service){const ds=activeDepartures(s);return ds.length?Math.min(...ds.map(d=>d.price)):s.price}
