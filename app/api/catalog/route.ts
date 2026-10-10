@@ -1,10 +1,35 @@
 import {deleteUnusedMedia,storedImagesValid,storedPdfValid} from '@/lib/media';
-import {tourDefaults,tourClosed,serviceCode} from '@/lib/tour';
+import {tourDefaults,tourClosed,serviceCode,businessDate} from '@/lib/tour';
 import {validateCatalogInput} from '@/lib/catalog-validation';
 import {database,adminAllowed,safeWrite} from '@/lib/storage';
 import {seeds} from '@/lib/catalog';
 import type {Service} from '@/lib/catalog';
-export async function GET(r:Request){try{const {results}=await database().prepare('SELECT data FROM catalog').all<{data:string}>();const map=new Map(seeds.map(s=>[s.id,s]));results.forEach(r=>{const s=JSON.parse(r.data);map.set(s.id,tourDefaults(s))});const url=new URL(r.url);const admin=(await adminAllowed(r))&&url.searchParams.get('scope')!=='public';return Response.json({items:[...map.values()].map(s=>({...s,closed:tourClosed(s)})).filter(s=>!(s as Service & {deleted?:boolean}).deleted&&(admin||(s.published&&(url.searchParams.get('closed')==='all'||!s.closed))))},{headers:{'Cache-Control':'no-store'}});}catch(e){console.error(e);return Response.json({error:'โหลดข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง'},{status:503});}}
+export async function GET(request:Request) {
+  try {
+    const url = new URL(request.url);
+    // Public reads never need to verify the visitor's CMS cookie.
+    const admin = url.searchParams.get('scope') !== 'public' && await adminAllowed(request);
+    const {results} = await database().prepare('SELECT data FROM catalog').all<{data:string}>();
+    const records = new Map<string,Service & {deleted?:boolean}>(seeds.map(item=>[item.id,item]));
+    for (const row of results) {
+      const item = JSON.parse(row.data) as Service & {deleted?:boolean};
+      records.set(item.id,item);
+    }
+    const today = businessDate();
+    const includeClosed = url.searchParams.get('closed') === 'all';
+    const items:Service[] = [];
+    for (const record of records.values()) {
+      if (record.deleted || (!admin && !record.published)) continue;
+      const closed = tourClosed(record,today);
+      if (!admin && !includeClosed && closed) continue;
+      items.push({...tourDefaults(record),closed});
+    }
+    return Response.json({items},{headers:{'Cache-Control':'no-store'}});
+  } catch (error) {
+    console.error(error);
+    return Response.json({error:'โหลดข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง'},{status:503});
+  }
+}
 export async function POST(request:Request) {
   if (!(await adminAllowed(request)) || !safeWrite(request)) return Response.json({error:'ไม่มีสิทธิ์จัดการ'},{status:403});
   try {

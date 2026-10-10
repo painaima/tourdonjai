@@ -16,6 +16,7 @@ const managedLinux = readExecutionProfile() === "managed-linux";
 
 const localBindingConfig = {
   main: "./build/sites-worker.ts",
+  assets: { binding: "ASSETS", html_handling: "none" as const, run_worker_first: ["/__pages/*"] },
   compatibility_flags: ["nodejs_compat"],
   d1_databases: d1
     ? [
@@ -61,7 +62,7 @@ export default defineConfig(async ({ command }) => {
         : {}),
     },
     plugins: [
-      vinext(),
+      vinext({ prerender: true }),
       sites({ mockAuth: !managedLinux }),
       connectorPreview(),
       cloudflare({

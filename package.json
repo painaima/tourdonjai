@@ -8,14 +8,14 @@
   "scripts": {
     "install:ci": "node scripts/install-ci.mjs",
     "dev": "node scripts/run-framework.mjs dev",
-    "build": "node scripts/run-framework.mjs build",
+    "build": "node scripts/run-framework.mjs build && node scripts/package-static-pages.mjs",
     "start": "node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1 --inspector-port 0",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "cf": "node scripts/cloudflare-account.mjs",
     "cf:whoami": "node scripts/cloudflare-account.mjs whoami",
     "typecheck": "tsc --noEmit",
-    "test": "node tests/access-auth.mjs && node tests/catalog-behavior.mjs && node tests/tour-media.mjs && node tests/cms-import.mjs",
+    "test": "node tests/access-auth.mjs && node tests/catalog-behavior.mjs && node tests/tour-media.mjs && node tests/cms-import.mjs && node tests/worker-routing.mjs",
     "check": "npm run typecheck && npm run lint && npm test"
   },
   "dependencies": {

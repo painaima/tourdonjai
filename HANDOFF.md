@@ -104,3 +104,19 @@ Validation: tests/tour-media.mjs covers cover ordering, shared-file preservation
 
 ## Image upload repair — 2026-10-08
 CMS image upload now validates returned media URLs before adding gallery entries, preventing blank/broken images when an upload fails. Gallery entries are filtered to valid URLs, and the feature cover can recover from the first valid gallery image. Production Git integration uses `.deployment/wrangler.production.json`; do not deploy the generated placeholder config.
+
+
+## Workers Free CPU limit recovery — 2026-10-10
+Production logs at 02:41:24 UTC confirmed `Worker exceeded CPU time limit` on GET / (10 ms CPU), with similar failures on /admin and /api/catalog. Account uses Workers Free.
+
+The production worker now serves build-time HTML shells for /, /closed-tours, /admin and all single-segment /services/:id URLs through the ASSETS binding. Admin Access verification runs before shell delivery. /__pages/* must run through the Worker and returns 404 for direct external requests. APIs still use the original validation/authentication/database handlers but bypass the React/RSC pipeline. Navigation uses document links to avoid server RSC rendering. The generic detail shell resolves the actual browser pathname after catalog loading, so new D1 programs do not require a rebuild. Business records and draft content are never embedded in the page shells.
+
+Intl date formatters are reused. Catalog GET determines the business date once, skips deleted/private records before normalization and skips Access JWT verification when scope=public. No business data was written by this repair. D1 diagnostic read: 46 stored rows, 235,561 characters, largest record 14,912 characters.
+
+Build with `npm run build`, which prerenders through the build-only Node cloudflare:workers environment shim and then packages all four HTML shells. Do not deploy a build that omits scripts/package-static-pages.mjs. Runtime Cloudflare bindings remain real; the shim is used only by the Node build process. Production configuration is .deployment/wrangler.production.json with ASSETS binding, html_handling=none and run_worker_first=["/__pages/*"].
+
+Validation: TypeScript, production build, existing Access/catalog/media/import tests and new worker-routing tests passed. ESLint has zero errors and existing image/unused-variable warnings. Local browser confirmed detail hydration and CMS. Live browser confirmed CMS with 37 nondeleted services (29 published), authenticated draft preview with disabled booking and the public homepage with 24 active tours. Anonymous /admin redirects to Access; unauthenticated/forged JWT inquiry GET returns 403; forged catalog requests receive only published data. Direct shell files return 404.
+
+Final Worker version: cf5cc2a7-ba8b-4525-9002-ed93f4941c91. Live tail captured 26 invocations, all outcome=ok: homepage/detail shells 0 ms CPU as reported, authenticated CMS 3 ms, catalog GET 5–7 ms (9 samples), settings/inquiry reads 0–1 ms. No exceededCpu events occurred in the captured verification window. Logs and HTTP summaries are ignored in tmp/cpu-*.
+
+The CPU repair source is prepared for the production GitHub branch so future builds retain this recovery. Existing uncommitted LINE changes and untracked import folders were preserved and excluded from the isolated production build. They were not published by this repair.
