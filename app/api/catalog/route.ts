@@ -9,7 +9,29 @@ export async function GET(request:Request) {
     const url = new URL(request.url);
     // Public reads never need to verify the visitor's CMS cookie.
     const admin = url.searchParams.get('scope') !== 'public' && await adminAllowed(request);
-    const {results} = await database().prepare('SELECT data FROM catalog').all<{data:string}>();
+    const id = admin ? url.searchParams.get('id') : null;
+    const code = admin ? url.searchParams.get('code')?.trim().toUpperCase() : null;
+    const summary = admin && url.searchParams.get('summary') === '1';
+    const projection = `json_object(
+      'id',json_extract(data,'$.id'),'title',json_extract(data,'$.title'),
+      'category',json_extract(data,'$.category'),'country',json_extract(data,'$.country'),
+      'price',json_extract(data,'$.price'),'duration',json_extract(data,'$.duration'),
+      'image',json_extract(data,'$.image'),'tag',json_extract(data,'$.tag'),
+      'airline',json_extract(data,'$.airline'),
+      'published',json_extract(data,'$.published'),'description',json_extract(data,'$.description'),
+      'serviceCode',json_extract(data,'$.serviceCode'),'urlCountry',json_extract(data,'$.urlCountry'),
+      'activityTags',json_extract(data,'$.activityTags'),'departures',json_extract(data,'$.departures'),
+      'deleted',json_extract(data,'$.deleted'))`;
+    const query = id
+      ? database().prepare('SELECT data FROM catalog WHERE id=? LIMIT 1').bind(id)
+      : code
+        ? database().prepare("SELECT data FROM catalog WHERE UPPER(json_extract(data,'$.serviceCode'))=? LIMIT 1").bind(code)
+        : summary
+          ? database().prepare(`SELECT ${projection} AS data FROM catalog`)
+          : admin
+            ? database().prepare('SELECT data FROM catalog')
+            : database().prepare("SELECT data FROM catalog WHERE json_extract(data,'$.published')=1 AND COALESCE(json_extract(data,'$.deleted'),0)=0");
+    const {results} = await query.all<{data:string}>();
     const records = new Map<string,Service & {deleted?:boolean}>(seeds.map(item=>[item.id,item]));
     for (const row of results) {
       const item = JSON.parse(row.data) as Service & {deleted?:boolean};
@@ -19,6 +41,7 @@ export async function GET(request:Request) {
     const includeClosed = url.searchParams.get('closed') === 'all';
     const items:Service[] = [];
     for (const record of records.values()) {
+      if ((id && record.id !== id) || (code && (record.serviceCode||record.id).trim().toUpperCase() !== code)) continue;
       if (record.deleted || (!admin && !record.published)) continue;
       const closed = tourClosed(record,today);
       if (!admin && !includeClosed && closed) continue;
