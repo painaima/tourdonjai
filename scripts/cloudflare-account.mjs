@@ -6,13 +6,22 @@ import { fileURLToPath } from 'node:url';
 
 // This checkout always uses its own account and credentials.
 const target = JSON.parse(readFileSync(new URL('../.deployment/cloudflare.json', import.meta.url), 'utf8'));
-const credentials = parseEnv(readFileSync(new URL('../.deployment/.env', import.meta.url), 'utf8'));
+let credentials = {};
+try {
+  credentials = parseEnv(readFileSync(new URL('../.deployment/.env', import.meta.url), 'utf8'));
+} catch (error) {
+  if (error.code !== 'ENOENT') {
+    console.error('Unable to read .deployment/.env. Check the project credential file.');
+    process.exit(1);
+  }
+}
+const token = process.env.CLOUDFLARE_API_TOKEN?.trim() || credentials.CLOUDFLARE_API_TOKEN?.trim();
 if (!/^[a-f0-9]{32}$/.test(target.account_id)) {
   console.error('Invalid project Cloudflare account ID.');
   process.exit(1);
 }
-if (!credentials.CLOUDFLARE_API_TOKEN?.trim()) {
-  console.error('Add CLOUDFLARE_API_TOKEN to .deployment/.env for the tourdonjai Cloudflare account. No other account was used.');
+if (!token) {
+  console.error('Set CLOUDFLARE_API_TOKEN in the environment or .deployment/.env for the tourdonjai Cloudflare account. No other account was used.');
   process.exit(1);
 }
 const args = process.argv.slice(2);
@@ -20,7 +29,7 @@ if (!args.length) args.push('whoami');
 const env = { ...process.env };
 for (const key of ['CLOUDFLARE_API_KEY', 'CLOUDFLARE_EMAIL', 'CF_API_KEY', 'CF_EMAIL', 'CF_API_TOKEN', 'CF_ACCOUNT_ID']) delete env[key];
 env.CLOUDFLARE_ACCOUNT_ID = target.account_id;
-env.CLOUDFLARE_API_TOKEN = credentials.CLOUDFLARE_API_TOKEN.trim();
+env.CLOUDFLARE_API_TOKEN = token;
 
 // Do not deploy the local preview's placeholder database/configuration.
 if (args[0] === 'publish' || args[0] === 'versions') {

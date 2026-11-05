@@ -17,6 +17,8 @@ Run `node <plugin-root>/scripts/configure-execution-profile.mjs` only when the p
 
 This starter does not use `wrangler.jsonc`.
 
+For this project's Cloudflare account, use `npm run cf:whoami` to check access and `npm run cf -- deploy` after building. The wrapper accepts `CLOUDFLARE_API_TOKEN` from the environment (preferred for CI) or the ignored `.deployment/.env` file. Environment values take priority. A fresh Git checkout does not include credentials; supply a token for the account in `.deployment/cloudflare.json`. Missing credentials fail with a setup message and never fall back to another account's OAuth session. Deployment always uses `.deployment/wrangler.production.json` with the existing D1, R2 and Access bindings.
+
 `install:ci` runs `npm ci` once against the shared lockfile, disables parent-workspace discovery, and includes required dev/optional dependencies despite production/omit settings. Sharp defaults to prebuilt binaries unless explicitly configured otherwise. Do not overlap installers.
 
 - **Portable:** Preserve host HOME, npm cache, registry, proxy, temporary paths, retry/concurrency settings, and lifecycle-script policy. Use `--prefer-offline --no-audit --no-fund`.

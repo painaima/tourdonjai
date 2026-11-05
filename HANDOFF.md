@@ -120,3 +120,17 @@ Validation: TypeScript, production build, existing Access/catalog/media/import t
 Final Worker version: cf5cc2a7-ba8b-4525-9002-ed93f4941c91. Live tail captured 26 invocations, all outcome=ok: homepage/detail shells 0 ms CPU as reported, authenticated CMS 3 ms, catalog GET 5–7 ms (9 samples), settings/inquiry reads 0–1 ms. No exceededCpu events occurred in the captured verification window. Logs and HTTP summaries are ignored in tmp/cpu-*.
 
 The CPU repair source is prepared for the production GitHub branch so future builds retain this recovery. Existing uncommitted LINE changes and untracked import folders were preserved and excluded from the isolated production build. They were not published by this repair.
+
+## MacBook Cloudflare credentials — 2026-10-16
+
+Created account-owned token `tourdonjai-macbook-deploy-2026-10-16` after user approval, with Individual Workers Editor restricted to `tourdonjai` and Account Settings Read. The dashboard's one-year expiration option was selected. Token is stored only in the ignored `.deployment/.env`, mode 0600; do not print or commit its value. Cloudflare account-token verification returned active and the target Worker's settings API was readable. Wrangler 4.92.0 `whoami` through the project wrapper confirmed `Tourdonjai@gmail.com's Account` and the pinned account ID. The existing `tourdonjai-deploy` token was preserved. Dependencies were installed from package-lock using bundled Node 24; no production deployment was performed for this credential repair.
+
+The account wrapper now handles a missing credential file and supports `CLOUDFLARE_API_TOKEN` from the environment, taking priority over the project file. Account/config guards and the refusal to fall back to another OAuth account remain. `tests/cloudflare-account.mjs` verifies credential selection, account pinning, missing-token diagnostics and deploy guards without network calls; it is included in `npm test`.
+
+## Production deployment — 2026-10-16
+
+At the user's request, built the current checkout and packaged all four static shells. TypeScript and all six test scripts passed. Deployed Worker version `d7364b47-40a6-4888-84ac-c497524f3e86`; Cloudflare's Worker deployments API confirms deployment `ec6d1b82-fffb-4245-ab73-27d1ab8aa35c` serves this version at 100%.
+
+Wrangler uploaded and activated the version but exited with an authentication error during its subsequent account-level `/workers/subdomain` lookup. The token remains restricted to the approved Worker and Account Settings Read. Worker-specific subdomain API confirms enabled=true. Do not interpret this CLI exit alone as a failed deployment or redeploy without checking the deployments API.
+
+Live curl checks: homepage, public catalog and settings 200; homepage references the new build chunk `index-a_O3yxFF.js`; anonymous admin 302 to the configured Access login; internal admin shell 404; private requests API 403. Python urllib requests received 403 even when curl succeeded. No database migrations or business data writes were performed.

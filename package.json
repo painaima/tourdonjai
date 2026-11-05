@@ -15,7 +15,7 @@
     "cf": "node scripts/cloudflare-account.mjs",
     "cf:whoami": "node scripts/cloudflare-account.mjs whoami",
     "typecheck": "tsc --noEmit",
-    "test": "node tests/access-auth.mjs && node tests/catalog-behavior.mjs && node tests/tour-media.mjs && node tests/cms-import.mjs && node tests/worker-routing.mjs",
+    "test": "node tests/access-auth.mjs && node tests/catalog-behavior.mjs && node tests/tour-media.mjs && node tests/cms-import.mjs && node tests/worker-routing.mjs && node tests/cloudflare-account.mjs",
     "check": "npm run typecheck && npm run lint && npm test"
   },
   "dependencies": {
